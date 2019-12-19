@@ -1,0 +1,62 @@
+<html>
+<body>
+<h1>Twitterのいいねを取得するやつ</h1>
+<div id="root"></div>
+</body>
+<script>
+    //サーバーから取得した関数をもとにページに描画する関数
+    function renderTweets(tweetList) {
+        const root = document.getElementById("root");
+        //root.innerHTML = tweetList;
+        tweetList.forEach((item, index) => {
+            const tweetElms = document.createElement("div");
+
+            const tweetIndex = document.createElement("h3");
+            tweetIndex.innerText = (index + 1);
+
+            const tweetText = document.createElement("p");
+            tweetText.innerText = item.text;
+
+            const userName = document.createElement("p");
+            userName.innerText = item.user.name;
+
+            const protectedInfo = document.createElement("p");
+
+            const isProtected = item.user.protected;
+            if (isProtected) {
+                protectedInfo.innerText = "これは鍵垢です"
+            } else {
+                protectedInfo.innerText = "公開垢です"
+            }
+
+            const retweetCount = document.createElement("p");
+            retweetCount.innerText = `リツイート数 : ${item.retweet_count}`;
+
+            const favoriteCount = document.createElement("p");
+            favoriteCount.innerText = `いいね数 : ${item.favorite_count}`;
+
+            const createAt = document.createElement("p");
+            createAt.innerText = item.created_at;
+
+            tweetElms.appendChild(tweetIndex);
+            tweetElms.appendChild(tweetText);
+            tweetElms.appendChild(userName);
+            tweetElms.appendChild(protectedInfo);
+            tweetElms.appendChild(retweetCount);
+            tweetElms.appendChild(favoriteCount);
+            tweetElms.appendChild(createAt);
+
+            root.appendChild(tweetElms);
+        });
+    }
+
+    //サーバーからツイートのリストを要求する関数
+    window.fetch("http://127.0.0.1:3000", {mode: "cors"}).then(async (result) => {
+        const tweetList = await result.json();
+        renderTweets(tweetList);
+    }).catch(error => {
+        console.log(error);
+        alert("エラーが発生しました!");
+    });
+</script>
+</html>
